@@ -91,40 +91,40 @@ def find_all_query_positions_in_word_via_suffix_arr(start, end, suff_arr):
 
 # Global alignment - Needle - Wunsch + scoring table
 
-def scoring_matrix_inplace(a, b):
+def scoring_matrix_inplace(this_c, that_c):
     """ Generate a scoring matrix such that matching has the highest value, transitions are penalised,
     transversions are penalised even more, and gaps are penalised the most. Reminder: A-G, C-T transitions,
     other combinations ase transversions. Scoring points are held globally. """
     # todo: a better solution for scoring points probably exists
-    if a == b:
+    if this_c == that_c:
         return scoring_points['M']
-    if a == '_' or b == '_':
+    if this_c == '_' or that_c == '_':
         return scoring_points['G']
-    maxb, minb = max(a, b), min(a, b)
+    maxb, minb = max(this_c, that_c), min(this_c, that_c)
     if (minb == 'A' and maxb == 'G') or (minb == 'C' and maxb == 'T'):
         return scoring_points['Ti']
     else:
         return scoring_points['Tv']
 
 
-def global_alignment(x, y, s):
+def global_alignment(this, that, scoring_matrix):
     """ Firstly, fill in V(i, 0) and V(0, j) with gap values, then the whole distance matrix. """
-    distance_matrix = numpy.zeros((len(x) + 1, len(y) + 1), dtype=int)
+    distance_matrix = numpy.zeros((len(this) + 1, len(that) + 1), dtype=int)
 
-    for i in range(1, len(x) + 1):
-        distance_matrix[i, 0] = distance_matrix[i - 1, 0] + s(x[i - 1], '_')
-    for j in range(1, len(y) + 1):
-        distance_matrix[0, j] = distance_matrix[0, j - 1] + s('_', y[j - 1])
+    for i in range(1, len(this) + 1):
+        distance_matrix[i, 0] = distance_matrix[i - 1, 0] + scoring_matrix(this[i - 1], '_')
+    for j in range(1, len(that) + 1):
+        distance_matrix[0, j] = distance_matrix[0, j - 1] + scoring_matrix('_', that[j - 1])
 
-    for i in range(1, len(x) + 1):
-        for j in range(1, len(y) + 1):
-            distance_matrix[i, j] = max(distance_matrix[i - 1, j] + s(x[i - 1], '_'),
-                                        distance_matrix[i, j - 1] + s('_', y[j - 1]),
-                                        distance_matrix[i - 1, j - 1] + s(x[i - 1], y[j - 1]))
+    for i in range(1, len(this) + 1):
+        for j in range(1, len(that) + 1):
+            distance_matrix[i, j] = max(distance_matrix[i - 1, j] + scoring_matrix(this[i - 1], '_'),
+                                        distance_matrix[i, j - 1] + scoring_matrix('_', that[j - 1]),
+                                        distance_matrix[i - 1, j - 1] + scoring_matrix(this[i - 1], that[j - 1]))
 
     # function returns table and global alignment score
     # alignment score is in cell (n,m) of the matrix
-    return distance_matrix, distance_matrix[len(x), len(y)]
+    return distance_matrix, distance_matrix[len(this), len(that)]
 
 
 def import_or_generate_scoring_points():
@@ -137,10 +137,10 @@ def import_or_generate_scoring_points():
                       'G': scoring_points_input[0]}
 
 
-def traceback(x, y, distance_matrix, scoring_matrix):
+def traceback(this, that, distance_matrix, scoring_matrix):
     # initializing starting position cell(n,m)
-    i = len(x)
-    j = len(y)
+    i = len(this)
+    j = len(that)
 
     # initializing strings we use to represent alignments in x, y, edit transcript and global alignment
     ax, ay, am, tr = '', '', '', ''
@@ -152,17 +152,17 @@ def traceback(x, y, distance_matrix, scoring_matrix):
         d, v, h = -100, -100, -100
 
         if i > 0 and j > 0:
-            delta = 1 if x[i - 1] == y[j - 1] else 0
-            d = distance_matrix[i - 1, j - 1] + scoring_matrix(x[i - 1], y[j - 1])  # diagonal movement
+            delta = 1 if this[i - 1] == that[j - 1] else 0
+            d = distance_matrix[i - 1, j - 1] + scoring_matrix(this[i - 1], that[j - 1])  # diagonal movement
         if i > 0:
-            v = distance_matrix[i - 1, j] + scoring_matrix(x[i - 1], '_')  # vertical movement
+            v = distance_matrix[i - 1, j] + scoring_matrix(this[i - 1], '_')  # vertical movement
         if j > 0:
-            h = distance_matrix[i, j - 1] + scoring_matrix('_', y[j - 1])  # horizontal movement
+            h = distance_matrix[i, j - 1] + scoring_matrix('_', that[j - 1])  # horizontal movement
 
         # backtracking to next (previous) cell
         if d >= v and d >= h:
-            ax += x[i - 1]
-            ay += y[j - 1]
+            ax += this[i - 1]
+            ay += that[j - 1]
             if delta == 1:
                 tr += 'M'
                 am += '|'
@@ -172,13 +172,13 @@ def traceback(x, y, distance_matrix, scoring_matrix):
             i -= 1
             j -= 1
         elif v >= h:
-            ax += x[i - 1]
+            ax += this[i - 1]
             ay += '_'
             tr += 'D'
             am += ' '
             i -= 1
         else:
-            ay += y[j - 1]
+            ay += that[j - 1]
             ax += '_'
             tr += 'I'
             am += ' '
