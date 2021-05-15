@@ -1,5 +1,6 @@
 import argparse
 import numpy
+import argparse
 
 
 # BWT & FM Index
@@ -134,7 +135,7 @@ def import_or_generate_scoring_points():
     args = parser.parse_args()
     scoring_points_input = sorted(args.integers)
     return {'M': scoring_points_input[3], 'Ti': scoring_points_input[2], 'Tv': scoring_points_input[1],
-                      'G': scoring_points_input[0]}
+            'G': scoring_points_input[0]}
 
 
 def traceback(this, that, distance_matrix, scoring_matrix):
@@ -187,6 +188,20 @@ def traceback(this, that, distance_matrix, scoring_matrix):
     alignment = '\n'.join([ax[::-1], am[::-1], ay[::-1]])
     return alignment, tr[::-1]
 
+
+def define_arg_parser():
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument('--fasta', type=str, required=True, help="Path to the fasta file")
+    arg_parser.add_argument('--fastq', type=str, required=True, help="Path to the fastq file")
+    arg_parser.add_argument('--margin', default=2)
+    arg_parser.add_argument('--match', type=int, nargs="+", default=0)
+    arg_parser.add_argument('--mismatch', type=int, nargs="+", default=-3)
+    arg_parser.add_argument('--gap', type=int, nargs="+", default=-7)
+    arg_parser.add_argument('--seed-length', type=int, default=10)
+    return arg_parser
+
+
+args = define_arg_parser().parse_args()
 
 scoring_points = import_or_generate_scoring_points()
 word = 'banana$'
