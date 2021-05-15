@@ -1,3 +1,8 @@
+import numpy
+
+
+# BWT & FM Index
+
 def rotations(t):
     """ Return list of rotations of input string t """
     tt = t * 2
@@ -57,7 +62,7 @@ def bwt_via_sa(t):
         if si == 0:
             bw.append('$')
         else:
-            bw.append(t[si-1])
+            bw.append(t[si - 1])
     return ''.join(bw)
 
 
@@ -81,6 +86,43 @@ def find_all_query_positions_in_word_via_suffix_arr(start, end, suff_arr):
         query_positions_in_word.append(suff_arr[start])
         start += 1
     return sorted(query_positions_in_word)
+
+
+# Global alignment - Needle - Wunsch + scoring table
+
+def scoring_matrix_inplace(a, b):
+    """ Generate a scoring matrix such that matching has the highest value (1), transitions are penalised (-1),
+    transversions are penalised even more (-2), and gaps are penalised the most (-7). Reminder: A-G, C-T transitions,
+    other combinations ase transversions. """
+    if a == b:
+        return 1
+    if a == '_' or b == '_':
+        return -7
+    maxb, minb = max(a, b), min(a, b)
+    if (minb == 'A' and maxb == 'G') or (minb == 'C' and maxb == 'T'):
+        return -1
+    else:
+        return -2
+
+
+def global_alignment(x, y, s):
+    """ Firstly, fill in V(i, 0) and V(0, j) with gap values, then the whole distance matrix. """
+    distance_matrix = numpy.zeros((len(x) + 1, len(y) + 1), dtype=int)
+
+    for i in range(1, len(x) + 1):
+        distance_matrix[i, 0] = distance_matrix[i - 1, 0] + s(x[i - 1], '_')
+    for j in range(1, len(y) + 1):
+        distance_matrix[0, j] = distance_matrix[0, j - 1] + s('_', y[j - 1])
+
+    for i in range(1, len(x) + 1):
+        for j in range(1, len(y) + 1):
+            distance_matrix[i, j] = max(distance_matrix[i - 1, j] + s(x[i - 1], '_'),
+                                        distance_matrix[i, j - 1] + s('_', y[j - 1]),
+                                        distance_matrix[i - 1, j - 1] + s(x[i - 1], y[j - 1]))
+
+    # function returns table and global alignment score
+    # alignment score is in cell (n,m) of the matrix
+    return distance_matrix, distance_matrix[len(x), len(y)]
 
 
 word = 'banana$'
