@@ -41,21 +41,25 @@ def first_col(tots):
         totc += count
     return first
 
+
 def make_suffix_array(s):
     """ Given T return suffix array SA(T).  We use Python's sorted
         function here for simplicity, but we can do better. """
     satups = sorted([(s[i:], i) for i in range(len(s))])
     # Extract and return just the offsets
-#     print(satups)
-    return map(lambda x: x[1], satups)
+    return list(map(lambda x: x[1], satups))
+
 
 def bwt_via_sa(t):
     """ Given T, returns BWT(T) by way of the suffix array. """
     bw = []
     for si in make_suffix_array(t):
-        if si == 0: bw.append('$')
-        else: bw.append(t[si-1])
-    return ''.join(bw) # return string-ized version of list bw
+        if si == 0:
+            bw.append('$')
+        else:
+            bw.append(t[si-1])
+    return ''.join(bw)
+
 
 def calculate_start_end_range(c, occ, query):
     try:
@@ -71,9 +75,20 @@ def calculate_start_end_range(c, occ, query):
         raise e
 
 
+def find_all_query_positions_in_word_via_suffix_arr(start, end, suff_arr):
+    query_positions_in_word = []
+    while start <= end:
+        query_positions_in_word.append(suff_arr[start])
+        start += 1
+    return sorted(query_positions_in_word)
+
+
 word = 'banana$'
 query = 'ana'
 last_column = bwt_via_bwm(word)
 occ_matrix, tots = make_occurrences_matrix(last_column)
 c = first_col(tots)
 start, end = calculate_start_end_range(c, occ_matrix, query)
+bwt_via_sa(word)
+suff_arr = make_suffix_array(word)
+query_pos = find_all_query_positions_in_word_via_suffix_arr(start, end, suff_arr)
