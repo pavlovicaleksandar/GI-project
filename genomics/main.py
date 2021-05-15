@@ -37,11 +37,28 @@ def first_col(tots):
     first = {}
     totc = 0
     for c, count in sorted(tots.items()):
-        first[c] = (totc, totc + count)
+        first[c] = (totc, totc + count - 1)
         totc += count
     return first
 
 
+def calculate_start_end_range(c, occ, query):
+    try:
+        reversed_query = query[::-1]
+        start, end = c[reversed_query[0]]
+        for ix in range(1, len(reversed_query)):
+            if start > end:
+                raise ValueError
+            start = c[reversed_query[ix]][0] + occ[reversed_query[ix]][start - 1]
+            end = c[reversed_query[ix]][0] + occ[reversed_query[ix]][end] - 1
+        return start, end
+    except Exception as e:
+        raise e
+
+
 word = 'banana$'
+query = 'ana'
 last_column = bwt_via_bwm(word)
 occ_matrix, tots = make_occurrences_matrix(last_column)
+c = first_col(tots)
+start, end = calculate_start_end_range(c, occ_matrix, query)
