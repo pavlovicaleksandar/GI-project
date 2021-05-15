@@ -14,16 +14,21 @@ def bwt_via_bwm(t):
     return ''.join(map(lambda x: x[-1], bwm(t)))
 
 
-def rank_bwt(bw):
-    """ Given BWT string bw, return parallel list of B-ranks.  Also
-        returns tots: map from character to # times it appears. """
-    tots = dict()
-    ranks = []
+def make_occurrences_matrix(bw):
+    """ Given BWT string bw, returns a map of lists. Keys are
+    characters and lists are cumulative # of occurrences up to and
+    including the row. """
+    tots = {}
+    occ_matrix = {}
     for c in bw:
-        if c not in tots: tots[c] = 0
-        ranks.append(tots[c])
+        if c not in tots:
+            tots[c] = 0
+            occ_matrix[c] = []
+    for c in bw:
         tots[c] += 1
-    return ranks, tots
+        for c in tots.keys():
+            occ_matrix[c].append(tots[c])
+    return occ_matrix, tots
 
 
 def first_col(tots):
@@ -37,9 +42,6 @@ def first_col(tots):
     return first
 
 
-
 word = 'banana$'
 last_column = bwt_via_bwm(word)
-ranks, tots = rank_bwt(last_column)
-last_column_with_ranks = zip(last_column, ranks)
-pass
+occ_matrix, tots = make_occurrences_matrix(last_column)
