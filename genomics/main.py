@@ -128,16 +128,6 @@ def global_alignment(this, that, scoring_matrix):
     return distance_matrix, distance_matrix[len(this), len(that)]
 
 
-def import_or_generate_scoring_points():
-    parser = argparse.ArgumentParser(description='Process scoring points.')
-    parser.add_argument('integers', type=int, nargs='*',
-                        help='4 scoring points', default=[1, -1, -2, -7])
-    args = parser.parse_args()
-    scoring_points_input = sorted(args.integers)
-    return {'M': scoring_points_input[3], 'Ti': scoring_points_input[2], 'Tv': scoring_points_input[1],
-            'G': scoring_points_input[0]}
-
-
 def traceback(this, that, distance_matrix, scoring_matrix):
     # initializing starting position cell(n,m)
     i = len(this)
@@ -194,14 +184,27 @@ def define_arg_parser():
     arg_parser.add_argument('--fasta', type=str, required=True, help="Path to the fasta file")
     arg_parser.add_argument('--fastq', type=str, required=True, help="Path to the fastq file")
     arg_parser.add_argument('--margin', default=2)
-    arg_parser.add_argument('--match', type=int, nargs="+", default=0)
-    arg_parser.add_argument('--mismatch', type=int, nargs="+", default=-3)
-    arg_parser.add_argument('--gap', type=int, nargs="+", default=-7)
+    arg_parser.add_argument('--match', type=int, nargs="+", default=[0, 1, 2])
+    arg_parser.add_argument('--mismatch', type=int, nargs="+", default=[-3, -2])
+    # arg_parser.add_argument('--Ti', type=int, nargs="+", default=-1)
+    # arg_parser.add_argument('--Tv', type=int, nargs="+", default=-3)
+    arg_parser.add_argument('--gap', type=int, nargs="+", default=[-7, -5])
     arg_parser.add_argument('--seed-length', type=int, default=10)
     return arg_parser
 
 
-args = define_arg_parser().parse_args()
+def import_or_generate_scoring_points():
+    # todo : create this in define_arg_parser()
+    parser = argparse.ArgumentParser(description='Process scoring points.')
+    parser.add_argument('integers', type=int, nargs='*',
+                        help='4 scoring points', default=[1, -1, -2, -7])
+    args = parser.parse_args()
+    scoring_points_input = sorted(args.integers)
+    return {'M': scoring_points_input[3], 'Ti': scoring_points_input[2], 'Tv': scoring_points_input[1],
+            'G': scoring_points_input[0]}
+
+
+# args = define_arg_parser().parse_args()
 
 scoring_points = import_or_generate_scoring_points()
 word = 'banana$'
