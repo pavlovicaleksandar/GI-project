@@ -80,3 +80,9 @@ expected_alignment = """TACGTCA_GC
 TATGTCATGC"""
 assert "MMRMMMMIMM" == transcript
 assert expected_alignment == alignment
+
+expected_fasta_len = 1
+expected_fastq_len = 20000
+test_references, test_reads = import_fasta_fastq()
+assert expected_fasta_len == len(test_references)
+assert expected_fastq_len == len(test_reads)

@@ -1,6 +1,7 @@
 import argparse
+from Bio import SeqIO
+from Bio.Seq import Seq
 import numpy
-import argparse
 
 
 # BWT & FM Index
@@ -178,6 +179,8 @@ def traceback(this, that, distance_matrix, scoring_matrix):
     alignment = '\n'.join([ax[::-1], am[::-1], ay[::-1]])
     return alignment, tr[::-1]
 
+# CMD Line Args
+
 
 def define_arg_parser():
     arg_parser = argparse.ArgumentParser()
@@ -204,7 +207,19 @@ def import_or_generate_scoring_points():
             'G': scoring_points_input[0]}
 
 
+# Read Fasta Fastq
+
+
+def import_file(path, file_type):
+    return list(map(lambda r: str(r.seq), SeqIO.parse(path, file_type)))
+
+
+def import_fasta_fastq(fasta_path='../data/reference.fasta', fastq_path='../data/reads.fastq'):
+    return import_file(fasta_path, file_type='fasta'), import_file(fastq_path, file_type='fastq')
+
+
 # args = define_arg_parser().parse_args()
+
 
 scoring_points = import_or_generate_scoring_points()
 word = 'banana$'
@@ -221,3 +236,5 @@ x = 'TACGTCAGC'
 y = 'TATGTCATGC'
 distances, alignment_score = global_alignment(x, y, scoring_matrix_inplace)
 alignment, transcript = traceback(x, y, distances, scoring_matrix_inplace)
+
+references, reads = import_fasta_fastq()
