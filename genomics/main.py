@@ -1,3 +1,4 @@
+import argparse
 import numpy
 
 
@@ -91,18 +92,19 @@ def find_all_query_positions_in_word_via_suffix_arr(start, end, suff_arr):
 # Global alignment - Needle - Wunsch + scoring table
 
 def scoring_matrix_inplace(a, b):
-    """ Generate a scoring matrix such that matching has the highest value (1), transitions are penalised (-1),
-    transversions are penalised even more (-2), and gaps are penalised the most (-7). Reminder: A-G, C-T transitions,
-    other combinations ase transversions. """
+    """ Generate a scoring matrix such that matching has the highest value, transitions are penalised,
+    transversions are penalised even more, and gaps are penalised the most. Reminder: A-G, C-T transitions,
+    other combinations ase transversions. Scoring points are held globally. """
+    # todo: a better solution for scoring points probably exists
     if a == b:
-        return 1
+        return scoring_points['M']
     if a == '_' or b == '_':
-        return -7
+        return scoring_points['G']
     maxb, minb = max(a, b), min(a, b)
     if (minb == 'A' and maxb == 'G') or (minb == 'C' and maxb == 'T'):
-        return -1
+        return scoring_points['Ti']
     else:
-        return -2
+        return scoring_points['Tv']
 
 
 def global_alignment(x, y, s):
@@ -125,6 +127,17 @@ def global_alignment(x, y, s):
     return distance_matrix, distance_matrix[len(x), len(y)]
 
 
+def import_or_generate_scoring_points():
+    parser = argparse.ArgumentParser(description='Process scoring points.')
+    parser.add_argument('integers', type=int, nargs='*',
+                        help='4 scoring points', default=[1, -1, -2, -7])
+    args = parser.parse_args()
+    scoring_points_input = sorted(args.integers)
+    return {'M': scoring_points_input[3], 'Ti': scoring_points_input[2], 'Tv': scoring_points_input[1],
+                      'G': scoring_points_input[0]}
+
+
+scoring_points = import_or_generate_scoring_points()
 word = 'banana$'
 query = 'ana'
 last_column = bwt_via_bwm(word)
@@ -134,3 +147,8 @@ start, end = calculate_start_end_range(c, occ_matrix, query)
 bwt_via_sa(word)
 suff_arr = make_suffix_array(word)
 query_pos = find_all_query_positions_in_word_via_suffix_arr(start, end, suff_arr)
+
+test_x = 'TACGTCAGC'
+test_y = 'TATGTCATGC'
+distances, alginment = global_alignment(test_x, test_y, scoring_matrix_inplace)
+print(distances)

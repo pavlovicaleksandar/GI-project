@@ -44,6 +44,15 @@ test_x = 'TACGTCAGC'
 test_y = 'TATGTCATGC'
 assert scoring_matrix_inplace(test_x[6], test_y[6]) == 1
 
+# todo: probably has a better solution. Py knowledge critically low :(
+# scoring_points = {'M': 2, 'Ti': -3, 'Tv': -6, 'G': -9}
+# assert scoring_matrix_inplace('C', '_') == -9
+# assert scoring_matrix_inplace('C', 'G') == -6
+# assert scoring_matrix_inplace('C', 'A') == -6
+# assert scoring_matrix_inplace('C', 'T') == -3
+# assert scoring_matrix_inplace('C', 'C') == 2
+# assert scoring_matrix_inplace(test_x[6], test_y[6]) == 2
+
 expected_distance = numpy.array([[0, -7, -14, -21, -28, -35, -42, -49, -56, -63, -70],
               [-7, 1, -6, -13, -20, -27, -34, -41, -48, -55, -62],
               [-14, -6, 2, -5, -12, -19, -26, -33, -40, -47, -54],
