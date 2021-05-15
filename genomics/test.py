@@ -1,10 +1,16 @@
 from genomics.main import *
+import pytest
+
 
 # BWT & FM Index
+@pytest.mark.parametrize("word, rotations", [
+    ('', []),
+    ('$', ['$']),
+    ('banana$', ['banana$', 'anana$b', 'nana$ba', 'ana$ban', 'na$bana', 'a$banan', '$banana'])
+])
+def test_rotations(word, rotations):
+    assert rotations(word) == rotations
 
-assert rotations('') == []
-assert rotations('$') == ['$']
-assert rotations('banana$') == ['banana$', 'anana$b', 'nana$ba', 'ana$ban', 'na$bana', 'a$banan', '$banana']
 
 assert bwm('') == []
 assert bwm('$') == ['$']
@@ -54,15 +60,15 @@ assert scoring_matrix_inplace(test_x[6], test_y[6]) == 1
 # assert scoring_matrix_inplace(test_x[6], test_y[6]) == 2
 
 expected_distance = numpy.array([[0, -7, -14, -21, -28, -35, -42, -49, -56, -63, -70],
-              [-7, 1, -6, -13, -20, -27, -34, -41, -48, -55, -62],
-              [-14, -6, 2, -5, -12, -19, -26, -33, -40, -47, -54],
-              [-21, -13, -5, 1, -6, -13, -18, -25, -32, -39, -46],
-              [-28, -20, -12, -6, 2, -5, -12, -19, -26, -31, -38],
-              [-35, -27, -19, -11, -5, 3, -4, -11, -18, -25, -32],
-              [-42, -34, -26, -18, -12, -4, 4, -3, -10, -17, -24],
-              [-49, -41, -33, -25, -19, -11, -3, 5, -2, -9, -16],
-              [-56, -48, -40, -32, -24, -18, -10, -2, 3, -1, -8],
-              [-63, -55, -47, -39, -31, -25, -17, -9, -3, 1, 0]])
+                                 [-7, 1, -6, -13, -20, -27, -34, -41, -48, -55, -62],
+                                 [-14, -6, 2, -5, -12, -19, -26, -33, -40, -47, -54],
+                                 [-21, -13, -5, 1, -6, -13, -18, -25, -32, -39, -46],
+                                 [-28, -20, -12, -6, 2, -5, -12, -19, -26, -31, -38],
+                                 [-35, -27, -19, -11, -5, 3, -4, -11, -18, -25, -32],
+                                 [-42, -34, -26, -18, -12, -4, 4, -3, -10, -17, -24],
+                                 [-49, -41, -33, -25, -19, -11, -3, 5, -2, -9, -16],
+                                 [-56, -48, -40, -32, -24, -18, -10, -2, 3, -1, -8],
+                                 [-63, -55, -47, -39, -31, -25, -17, -9, -3, 1, 0]])
 expected_alignment_score = 0
 distances, alignment_score = global_alignment(test_x, test_y, scoring_matrix_inplace)
 assert (expected_distance == distances).all()
