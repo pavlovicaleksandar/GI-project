@@ -137,6 +137,57 @@ def import_or_generate_scoring_points():
                       'G': scoring_points_input[0]}
 
 
+def traceback(x, y, distance_matrix, scoring_matrix):
+    # initializing starting position cell(n,m)
+    i = len(x)
+    j = len(y)
+
+    # initializing strings we use to represent alignments in x, y, edit transcript and global alignment
+    ax, ay, am, tr = '', '', '', ''
+
+    # exit condition is when we reach cell (0,0)
+    while i > 0 or j > 0:
+
+        # calculating diagonal, horizontal and vertical scores for current cell
+        d, v, h = -100, -100, -100
+
+        if i > 0 and j > 0:
+            delta = 1 if x[i - 1] == y[j - 1] else 0
+            d = distance_matrix[i - 1, j - 1] + scoring_matrix(x[i - 1], y[j - 1])  # diagonal movement
+        if i > 0:
+            v = distance_matrix[i - 1, j] + scoring_matrix(x[i - 1], '_')  # vertical movement
+        if j > 0:
+            h = distance_matrix[i, j - 1] + scoring_matrix('_', y[j - 1])  # horizontal movement
+
+        # backtracking to next (previous) cell
+        if d >= v and d >= h:
+            ax += x[i - 1]
+            ay += y[j - 1]
+            if delta == 1:
+                tr += 'M'
+                am += '|'
+            else:
+                tr += 'R'
+                am += ' '
+            i -= 1
+            j -= 1
+        elif v >= h:
+            ax += x[i - 1]
+            ay += '_'
+            tr += 'D'
+            am += ' '
+            i -= 1
+        else:
+            ay += y[j - 1]
+            ax += '_'
+            tr += 'I'
+            am += ' '
+            j -= 1
+
+    alignment = '\n'.join([ax[::-1], am[::-1], ay[::-1]])
+    return alignment, tr[::-1]
+
+
 scoring_points = import_or_generate_scoring_points()
 word = 'banana$'
 query = 'ana'
@@ -148,7 +199,7 @@ bwt_via_sa(word)
 suff_arr = make_suffix_array(word)
 query_pos = find_all_query_positions_in_word_via_suffix_arr(start, end, suff_arr)
 
-test_x = 'TACGTCAGC'
-test_y = 'TATGTCATGC'
-distances, alginment = global_alignment(test_x, test_y, scoring_matrix_inplace)
-print(distances)
+x = 'TACGTCAGC'
+y = 'TATGTCATGC'
+distances, alignment_score = global_alignment(x, y, scoring_matrix_inplace)
+alignment, transcript = traceback(x, y, distances, scoring_matrix_inplace)

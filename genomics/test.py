@@ -66,4 +66,11 @@ expected_distance = numpy.array([[0, -7, -14, -21, -28, -35, -42, -49, -56, -63,
 expected_alignment_score = 0
 distances, alignment_score = global_alignment(test_x, test_y, scoring_matrix_inplace)
 assert (expected_distance == distances).all()
-assert alignment_score == expected_alignment_score
+assert expected_alignment_score == alignment_score
+
+alignment, transcript = traceback(x, y, distances, scoring_matrix_inplace)
+expected_alignment = """TACGTCA_GC
+|| |||| ||
+TATGTCATGC"""
+assert "MMRMMMMIMM" == transcript
+assert expected_alignment == alignment
