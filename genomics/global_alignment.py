@@ -1,4 +1,7 @@
 import numpy
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def scoring_matrix_inplace(this_c, that_c, scoring_points):

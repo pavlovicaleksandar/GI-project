@@ -1,3 +1,8 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 def rotations(t):
     """ Return list of rotations of input string t """
     tt = t * 2
