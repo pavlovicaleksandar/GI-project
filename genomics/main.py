@@ -56,24 +56,27 @@ def cli():
 @click.option('--gap', type=int, required=True)
 @click.option('--seed_length', type=int, default=10)
 def run(fasta_path, fastq_path, margin, match, mismatch, gap, seed_length):
-    enable_logging()
-    logger.info(f'Starting giseed with params fasta_path={fastq_path} '
-                f'fastq_path={fastq_path} margin={margin} match={match} '
-                f'mismatch={mismatch} gap={gap} seed_length={seed_length}')
+    try:
+        enable_logging()
+        logger.info(f'Starting giseed with params fasta_path={fastq_path} '
+                    f'fastq_path={fastq_path} margin={margin} match={match} '
+                    f'mismatch={mismatch} gap={gap} seed_length={seed_length}')
 
-    scoring_points = import_or_generate_scoring_points(match, mismatch, gap)
+        scoring_points = import_or_generate_scoring_points(match, mismatch, gap)
 
-    logger.info('Importing fasta and fastq files')
-    references, reads = import_fasta_fastq(fasta_path, fastq_path)
-    logger.info('Finished importing fasta and fastq files')
+        logger.info('Importing fasta and fastq files')
+        references, reads = import_fasta_fastq(fasta_path, fastq_path)
+        logger.info('Finished importing fasta and fastq files')
 
-    logger.info('Starting seed and extend')
-    results = seed_and_extend(scoring_points, references, reads, margin, seed_length)
-    logger.info('Finished seed and extend')
+        logger.info('Starting seed and extend')
+        results = seed_and_extend(scoring_points, references, reads, margin, seed_length)
+        logger.info('Finished seed and extend')
 
-    logger.info('Writing results to csv file')
-    write_results_to_csv_file(f'results-{time.time()}.csv', results)
-    logger.info('Finished writing results to csv file')
+        logger.info('Writing results to csv file')
+        write_results_to_csv_file(f'results-{time.time()}.csv', results)
+        logger.info('Finished writing results to csv file')
+    except Exception as exc:
+        logger.error('Following exception occurred ', exc)
 
 
 if __name__ == '__main__':
