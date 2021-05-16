@@ -1,5 +1,6 @@
 from genomics.burrows import *
 from genomics.global_alignment import *
+from genomics.seed_extend import *
 import argparse
 from Bio import SeqIO
 from Bio.Seq import Seq
@@ -44,13 +45,14 @@ def import_file(path, file_type):
     return list(map(lambda r: str(r.seq), SeqIO.parse(path, file_type)))
 
 
-def import_fasta_fastq(fasta_path='../data/reference.fasta', fastq_path='../data/reads.fastq'):
+def import_fasta_fastq(fasta_path='../data/example_human_reference.fasta', fastq_path='../data/example_human_Illumina.pe_1.fastq'):
     return import_file(fasta_path, file_type='fasta'), import_file(fastq_path, file_type='fastq')
 
 
-args = define_arg_parser().parse_args()
 
 
+
+# args = define_arg_parser().parse_args()
 scoring_points = import_or_generate_scoring_points()
 word = 'banana$'
 query = 'ana'
@@ -68,3 +70,5 @@ distances, alignment_score = global_alignment(x, y, scoring_points)
 alignment, transcript = traceback(x, y, distances, scoring_points)
 
 references, reads = import_fasta_fastq()
+
+print(seed_and_extend(scoring_points, references, reads))

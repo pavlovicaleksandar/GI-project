@@ -67,12 +67,12 @@ def calculate_start_end_range(c, occ, query):
         start, end = c[reversed_query[0]]
         for ix in range(1, len(reversed_query)):
             if start > end:
-                raise ValueError
+                return -1, -1
             start = c[reversed_query[ix]][0] + occ[reversed_query[ix]][start - 1]
             end = c[reversed_query[ix]][0] + occ[reversed_query[ix]][end] - 1
         return start, end
     except Exception as e:
-        raise e
+        return -1, -1
 
 
 def find_all_query_positions_in_word_via_suffix_arr(start, end, suff_arr):
