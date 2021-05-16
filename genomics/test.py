@@ -95,6 +95,7 @@ TATGTCATGC'''  # really unfortunate formatting, consider removing since i think 
     assert "MMRMMMMIMM" == transcript
     assert expected_alignment == alignment
 
+
 def test_fasta_fastq_import():
     test_references, test_reads = import_fasta_fastq()
     assert 1 == len(test_references)
