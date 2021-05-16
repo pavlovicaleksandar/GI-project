@@ -5,11 +5,11 @@ import time
 import csv
 
 
-def import_or_generate_scoring_points(match, missmatch, gap):
+def import_or_generate_scoring_points(match, mismatch, gap):
     return {
         'M': match,
-        'Ti': missmatch,
-        'Tv': missmatch,
+        'Ti': mismatch,
+        'Tv': mismatch,
         'G': gap
     }
 
@@ -40,11 +40,11 @@ def cli():
 @click.option('--fastq_path', type=str, required=True)
 @click.option('--margin', type=int, default=2)
 @click.option('--match', type=int, required=True)
-@click.option('--missmatch', type=int, required=True)
+@click.option('--mismatch', type=int, required=True)
 @click.option('--gap', type=int, required=True)
 @click.option('--seed_length', type=int, default=10)
-def run(fasta_path, fastq_path, margin, match, missmatch, gap, seed_length):
-    scoring_points = import_or_generate_scoring_points(match, missmatch, gap)
+def run(fasta_path, fastq_path, margin, match, mismatch, gap, seed_length):
+    scoring_points = import_or_generate_scoring_points(match, mismatch, gap)
     references, reads = import_fasta_fastq(fasta_path, fastq_path)
     results = seed_and_extend(scoring_points, references, reads, margin, seed_length)
     write_results_to_csv_file(f'results-{time.time()}.csv', results)

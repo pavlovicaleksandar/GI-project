@@ -35,8 +35,9 @@ def seed_and_extend(scoring_points, references, reads, margin=3, seed_length=10,
 
 
 def extract(c, margin, occ_matrix, read, reference, seed, seed_length, scoring_points, suff_arr):
-    #  todo: skip -1, -1
     start, end = calculate_start_end_range(c, occ_matrix, seed)
+    if (start, end) == (-1, -1):
+        return []
     seed_positions = find_all_query_positions_in_word_via_suffix_arr(start, end, suff_arr)
     # ref     "ctagtcgt agctagctgatcg"
     # read    "gctgt cgtc"
