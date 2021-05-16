@@ -1,5 +1,4 @@
-from genomics.burrows import *
-from genomics.global_alignment import *
+from genomics.main import *
 import pytest
 
 
@@ -53,7 +52,7 @@ def test_calculate_start_end_range(example_word, example_query, result_start, re
 # Global Alignment
 
 
-scoring_points = {'M': 1, 'Ti': -1, 'Tv': -1, 'G': -7}
+scoring_points = {'M': 1, 'Ti': -1, 'Tv': -3, 'G': -7}
 x = 'TACGTCAGC'
 y = 'TATGTCATGC'
 expected_distance = numpy.array([[0, -7, -14, -21, -28, -35, -42, -49, -56, -63, -70],
@@ -64,14 +63,14 @@ expected_distance = numpy.array([[0, -7, -14, -21, -28, -35, -42, -49, -56, -63,
                                  [-35, -27, -19, -11, -5, 3, -4, -11, -18, -25, -32],
                                  [-42, -34, -26, -18, -12, -4, 4, -3, -10, -17, -24],
                                  [-49, -41, -33, -25, -19, -11, -3, 5, -2, -9, -16],
-                                 [-56, -48, -40, -32, -24, -18, -10, -2, 3, -1, -8],
-                                 [-63, -55, -47, -39, -31, -25, -17, -9, -3, 1, 0]])
+                                 [-56, -48, -40, -32, -24, -18, -10,  -2,   2,  -1,  -8],
+                                 [-63, -55, -47, -39, -31, -25, -17,  -9,  -3,  -1,   0]])
 
 
 @pytest.mark.parametrize("example_this, example_that, result", [
     ('C', '_', -7),
-    ('C', 'G', -1),
-    ('C', 'A', -1),
+    ('C', 'G', -3),
+    ('C', 'A', -3),
     ('C', 'T', -1),
     ('C', 'C', 1),
 
@@ -83,8 +82,7 @@ def test_scoring_matrix_inplace(example_this, example_that, result):
 def test_global_alignment():
     expected_alignment_score = 0
     distances, alignment_score = global_alignment(x, y, scoring_points)
-    # TODO - figure out why this is failing
-    # assert (expected_distance == distances).all()
+    assert (expected_distance == distances).all()
     assert expected_alignment_score == alignment_score
 
 
@@ -97,9 +95,21 @@ TATGTCATGC'''  # really unfortunate formatting, consider removing since i think 
     assert "MMRMMMMIMM" == transcript
     assert expected_alignment == alignment
 
+def test_fasta_fastq_import():
+    test_references, test_reads = import_fasta_fastq()
+    assert 1 == len(test_references)
+    assert 172 == len(test_reads)
 
-# expected_fasta_len = 1
-# expected_fastq_len = 20000
-# test_references, test_reads = import_fasta_fastq()
-# assert expected_fasta_len == len(test_references)
-# assert expected_fastq_len == len(test_reads)
+
+@pytest.mark.parametrize("example_this, example_that, result", [
+    ('ACTGTAAC', 'GTTACAGT', True),
+    ('AA', 'TT', True),
+    ('', '', True),
+    ('', 'A', False),
+    ('A', 'C', False),
+    ('A', 'G', False),
+    ('ACTGTAAC', 'TGACATTG', False),
+
+])
+def test_reverse_and_complement(example_this, example_that, result):
+    assert (reverse_and_complement(example_this) == example_that) == result
