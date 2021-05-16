@@ -7,18 +7,17 @@ def rotations(t):
     """ Return list of rotations of input string t """
     words = list(t)
     all_rotations = []
-
-    for i in range(len(words)):
-
-        logger.info(f'Processing iteration {i} in rotations')
+    words_length = len(words)
+    for i in range(words_length):
+        if i % 10000:
+            logger.info(f'Processing iteration {i} of {words_length} in rotations')
 
         word = t[-1] + t[:-1]
         new = ''.join(word)
         t = new
-        all_rotations.append(''.join(word))
+        all_rotations.append(new)
         i += 1
     return all_rotations
-
 
 
 def bwm(t):
