@@ -1,5 +1,8 @@
 from genomics.burrows import *
 from genomics.global_alignment import *
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def reverse_and_complement(this):
@@ -16,7 +19,11 @@ def seed_and_extend(scoring_points, references, reads, margin=3, seed_length=10,
 
     # init
     reference = references[reference_index]+'$'
+
+    logger.info('Starting bwt via bwm')
     bwt_reference = bwt_via_bwm(reference)
+    logger.info('Finished bwt via bwm')
+
     occ_matrix, tots = make_occurrences_matrix(bwt_reference)
     c = first_col(tots)
     suff_arr = make_suffix_array(reference)
