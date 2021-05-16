@@ -73,7 +73,7 @@ def run(fasta_path, fastq_path, margin, match, mismatch, gap, seed_length):
         logger.info('Finished seed and extend')
 
         logger.info('Writing results to csv file')
-        write_results_to_csv_file(f'results-{time.time()}.csv', results)
+        # write_results_to_csv_file(f'results-{time.time()}.csv', results)
         logger.info('Finished writing results to csv file')
     except Exception as exc:
         logger.error('Following exception occurred ', exc)

@@ -6,7 +6,7 @@ import pytest
 @pytest.mark.parametrize("example, result", [
     ('', []),
     ('$', ['$']),
-    ('banana$', ['banana$', 'anana$b', 'nana$ba', 'ana$ban', 'na$bana', 'a$banan', '$banana'])
+    ('banana$', ['$banana', 'a$banan', 'na$bana', 'ana$ban', 'nana$ba', 'anana$b', 'banana$'])
 ])
 def test_rotations(example, result):
     assert rotations(example) == result
