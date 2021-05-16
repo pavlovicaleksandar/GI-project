@@ -5,12 +5,20 @@ logger = logging.getLogger(__name__)
 
 def rotations(t):
     """ Return list of rotations of input string t """
-    b = len(t)
+    words = list(t)
     all_rotations = []
-    for i in range(b):
-        c = t[i:]+t[:i]
-        all_rotations.append(c)
+
+    for i in range(len(words)):
+        if i % 10000 == 0:
+            logger.info(f'Processing iteration {i} in rotations')
+
+        word = t[-1] + t[:-1]
+        new = ''.join(word)
+        t = new
+        all_rotations.append(''.join(word))
+        i += 1
     return all_rotations
+
 
 
 def bwm(t):

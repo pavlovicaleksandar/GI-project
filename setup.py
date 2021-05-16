@@ -4,7 +4,7 @@ setup(
     name='giseed',
     packages=['genomics'],
     py_modules=['genomics.main'],
-    version='1.0.3',
+    version='1.0.4',
     license='MIT',
     description='Tool developed for GI course on ETF Belgrade',
     author='Marko Aleksandar Marko',
