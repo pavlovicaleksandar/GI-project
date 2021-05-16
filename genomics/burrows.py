@@ -9,8 +9,8 @@ def rotations(t):
     all_rotations = []
 
     for i in range(len(words)):
-        if i % 10000 == 0:
-            logger.info(f'Processing iteration {i} in rotations')
+
+        logger.info(f'Processing iteration {i} in rotations')
 
         word = t[-1] + t[:-1]
         new = ''.join(word)
