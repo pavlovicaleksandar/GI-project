@@ -1,3 +1,4 @@
 biopython==1.78
 numpy==1.20.3
 pytest==6.2.4
+click==8.0.0
