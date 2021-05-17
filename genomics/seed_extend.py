@@ -12,14 +12,8 @@ def get_seed(seed_length, read):
 
 
 # make coarse then do fine refine
-def seed_and_extend(scoring_points, references, reads, margin=3, seed_length=10, reference_index=0):
+def seed_and_extend(reference, reads, occ_matrix, c, suff_arr, scoring_points, margin=3, seed_length=10):
 
-    # init
-    reference = references[reference_index]+'$'
-    bwt_reference = bwt_via_bwm(reference)
-    occ_matrix, tots = make_occurrences_matrix(bwt_reference)
-    c = first_col(tots)
-    suff_arr = make_suffix_array(reference)
     result = []
     for read in reads:
         # for each read extract substrins - seeds and reverse complement
@@ -54,4 +48,5 @@ def extract(c, margin, occ_matrix, read, reference, seed, seed_length, scoring_p
         alignment, transcript = traceback(read[seed_length:], reference[start_pos:end_pos], distances,
                                           scoring_points)
         result.append((start, end, alignment_score, transcript))
+
     return result

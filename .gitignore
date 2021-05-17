@@ -140,3 +140,5 @@ cython_debug/
 /GI-Project.iml
 /data/*
 *.csv
+*.fastq
+*.fasta

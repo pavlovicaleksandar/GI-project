@@ -4,6 +4,15 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def generate_scoring_points(match, mismatch, gap):
+    return {
+        'M': match,
+        'Ti': mismatch,
+        'Tv': mismatch,
+        'G': gap
+    }
+
+
 def scoring_matrix_inplace(this_c, that_c, scoring_points):
     """ Generate a scoring matrix such that matching has the highest value, transitions are penalised,
     transversions are penalised even more, and gaps are penalised the most. Reminder: A-G, C-T transitions,

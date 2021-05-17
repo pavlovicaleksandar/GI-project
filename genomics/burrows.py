@@ -1,5 +1,4 @@
 import logging
-
 logger = logging.getLogger(__name__)
 
 
@@ -76,7 +75,7 @@ def calculate_start_end_range(c, occ, query):
             start = c[reversed_query[ix]][0] + occ[reversed_query[ix]][start - 1]
             end = c[reversed_query[ix]][0] + occ[reversed_query[ix]][end] - 1
         return start, end
-    except Exception as e:
+    except Exception:
         return -1, -1
 
 
@@ -86,3 +85,18 @@ def find_all_query_positions_in_word_via_suffix_arr(start, end, suff_arr):
         query_positions_in_word.append(suff_arr[start])
         start += 1
     return sorted(query_positions_in_word)
+
+
+def get_occurrences_matrix_and_totals(reference):
+
+    # Making reference compliant with bwt
+    reference = reference + '$'
+
+    transformed_reference = bwt_via_bwm(reference)
+    logger.info('Finished BW Transformation')
+
+    # Note - not inline return since I want to see if this step finishes
+    occurrences_matrix, totals = make_occurrences_matrix(transformed_reference)
+    logger.info('Finished generating occurrences matrix and totals')
+
+    return occurrences_matrix, totals
