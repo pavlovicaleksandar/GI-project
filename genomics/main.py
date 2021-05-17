@@ -66,7 +66,7 @@ def giska(fasta_path):
         reference = import_file(path=fasta_path, file_type='fasta')[0]
         logger.info('Finished importing fasta file')
 
-        occurrences_matrix, totals = get_occurrances_matrix_and_totals(reference)
+        occurrences_matrix, totals = get_occurrences_matrix_and_totals(reference)
         logger.info(f'Finished generating occurrences matrix and totals for {fasta_path} fasta file')
 
         write_data_to_file(occurrences_matrix, 'occurrences_matrix.txt')
