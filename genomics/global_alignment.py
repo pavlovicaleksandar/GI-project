@@ -66,14 +66,20 @@ def traceback(this, that, distance_matrix, scoring_points):
 
         if i > 0 and j > 0:
             delta = 1 if this[i - 1] == that[j - 1] else 0
-            d = distance_matrix[i - 1, j - 1] + scoring_matrix_inplace(this[i - 1], that[j - 1], scoring_points)  # diagonal movement
+            # diagonal movement
+            d = distance_matrix[i - 1, j - 1] + scoring_matrix_inplace(this[i - 1], that[j - 1], scoring_points)
         if i > 0:
-            v = distance_matrix[i - 1, j] + scoring_matrix_inplace(this[i - 1], '_', scoring_points)  # vertical movement
+            # vertical movement
+            v = distance_matrix[i - 1, j] + scoring_matrix_inplace(this[i - 1], '_', scoring_points)
         if j > 0:
-            h = distance_matrix[i, j - 1] + scoring_matrix_inplace('_', that[j - 1], scoring_points)  # horizontal movement
+            # horizontal movement
+            h = distance_matrix[i, j - 1] + scoring_matrix_inplace('_', that[j - 1], scoring_points)
 
         # backtracking to next (previous) cell
-        if d >= v and d >= h:
+        # todo : check error ;
+        #   Added if i > 0 and j > 0 ... elif i > 0 - to skip over.
+        #   This should add a `_` for the missing char
+        if d >= v and d >= h and (i > 0 and j > 0):
             ax += this[i - 1]
             ay += that[j - 1]
             if delta == 1:
@@ -84,13 +90,19 @@ def traceback(this, that, distance_matrix, scoring_points):
                 am += ' '
             i -= 1
             j -= 1
-        elif v >= h:
+        elif v >= h and i > 0:
             ax += this[i - 1]
             ay += '_'
             tr += 'D'
             am += ' '
             i -= 1
         else:
+            # can j be less than 0? We could have ended up here:
+            #       1. if i < 0 and j > 0 => so no
+            #       2. if i < 0 and j < 0 but v < h: ?
+            #       ...better safe than sorry ':D
+            if j == 0:
+                break
             ay += that[j - 1]
             ax += '_'
             tr += 'I'

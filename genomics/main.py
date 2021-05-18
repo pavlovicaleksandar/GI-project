@@ -122,7 +122,7 @@ def ekstendovic(fasta_path, fastq_path, occurrences_matrix_path, c_path,
         logger.info('Finished writing results to csv file')
 
     except Exception as exc:
-        logger.error(f'Following exception occurred {exc}')
+        logger.error(f'Following exception occurred', exc)
 
 
 if __name__ == '__main__':

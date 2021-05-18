@@ -21,13 +21,16 @@ def seed_and_extend(reference, reads, occ_matrix, c, suff_arr, scoring_points, m
         seed = get_seed(seed_length, read)
         rc_seed = get_seed(seed_length, rc_read)
 
-        result.extend(extract(c, margin, occ_matrix, read, reference, seed, seed_length, scoring_points, suff_arr))
-        result.extend(extract(c, margin, occ_matrix, rc_read, reference, rc_seed, seed_length, scoring_points, suff_arr))
+        # Added direction to be able to have more info in the result
+        result.extend(
+            extract(c, margin, occ_matrix, read, reference, seed, seed_length, scoring_points, suff_arr, dir="fwd"))
+        result.extend(
+            extract(c, margin, occ_matrix, rc_read, reference, rc_seed, seed_length, scoring_points, suff_arr, dir="rc"))
 
-    return sorted(result, key=lambda tup: tup[2], reverse=True)
+    return sorted(result, key=lambda tup: tup[3], reverse=True)
 
 
-def extract(c, margin, occ_matrix, read, reference, seed, seed_length, scoring_points, suff_arr):
+def extract(c, margin, occ_matrix, read, reference, seed, seed_length, scoring_points, suff_arr, dir):
     start, end = calculate_start_end_range(c, occ_matrix, seed)
     if (start, end) == (-1, -1):
         return []
@@ -46,6 +49,6 @@ def extract(c, margin, occ_matrix, read, reference, seed, seed_length, scoring_p
                                                       scoring_points)
         alignment, transcript = traceback(read[seed_length:], reference[start_pos:end_pos], distances,
                                           scoring_points)
-        result.append((start, end, alignment_score, transcript))
+        result.append((start, end, dir, alignment_score, transcript))
 
     return result
