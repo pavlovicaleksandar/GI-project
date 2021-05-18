@@ -88,7 +88,6 @@ def find_all_query_positions_in_word_via_suffix_arr(start, end, suff_arr):
 
 
 def get_occurrences_matrix_and_totals(reference):
-
     # Making reference compliant with bwt
     reference = reference + '$'
 

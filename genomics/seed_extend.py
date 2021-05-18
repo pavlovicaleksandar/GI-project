@@ -13,10 +13,9 @@ def get_seed(seed_length, read):
 
 # make coarse then do fine refine
 def seed_and_extend(reference, reads, occ_matrix, c, suff_arr, scoring_points, margin=3, seed_length=10):
-
     result = []
     for read in reads:
-        # for each read extract substrins - seeds and reverse complement
+        # for each read extract substrings - seeds and reverse complement
         rc_read = reverse_and_complement(read)
 
         seed = get_seed(seed_length, read)
@@ -33,7 +32,7 @@ def extract(c, margin, occ_matrix, read, reference, seed, seed_length, scoring_p
     if (start, end) == (-1, -1):
         return []
     seed_positions = find_all_query_positions_in_word_via_suffix_arr(start, end, suff_arr)
-    # ref     "ctagtcgt agctagctgatcg"
+    # ref     "ctgctgt agctagctgatcg"
     # read    "gctgt cgtc"
     # s       "gctgt"
     result = []

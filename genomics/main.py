@@ -85,7 +85,7 @@ def giska(fasta_path):
         logger.info("Finished writing to suffix_array.txt")
 
     except Exception as exc:
-        logger.error(f'Following exception occurred {exc}')
+        logger.error(f'Following exception occurred', exc)
 
 
 @cli.command()
