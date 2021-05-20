@@ -22,7 +22,7 @@ def import_fasta_fastq(fasta_path='../data/example_human_reference.fasta', fastq
 def write_results_to_csv_file(file_name, results):
     with open(file_name, mode='w') as result_file:
         writer = csv.writer(result_file)
-        writer.writerow(['start', 'end', 'alignment-score', 'transcription'])
+        writer.writerow(['start', 'end', 'direction', 'alignment-score', 'transcription'])
         for result in results:
             writer.writerow(list(result))
 
