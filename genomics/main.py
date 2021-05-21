@@ -115,16 +115,24 @@ def ekstendovic(fasta_path, fastq_path, occurrences_matrix_path, c_path,
         c = read_from_file_to_dict(c_path)
         suffix_array = read_from_file_to_dict(suffix_array_path)
 
-        parameters = {"match": match, "mismatch": mismatch, "gap": gap, "margin": margin, "seed-length": seed_length }
+        parameters = {"match": match, "mismatch": mismatch, "gap": gap, "margin": margin, "seed-length": seed_length}
+        file_name = create_output_file_name(parameters)
         results = seed_and_extend(references[0], reads, occurrences_matrix, c,
                                   suffix_array, scoring_points, margin, seed_length)
         logger.info('Finished with seed and extend.')
 
-        write_results_to_csv_file(f'results-{time.time()}.csv', parameters, results)
+        write_results_to_csv_file(file_name, parameters, results)
         logger.info('Finished writing results to csv file')
 
     except Exception as exc:
         logger.error(f'Following exception occurred', exc)
+
+
+def create_output_file_name(parameters):
+    version = ''
+    for k, v in parameters.items():
+        version += str(k) + '_' + str(v) + '_'
+    return f'results_{version[:-1]}.csv'
 
 
 if __name__ == '__main__':
