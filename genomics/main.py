@@ -19,11 +19,28 @@ def import_fasta_fastq(fasta_path='../data/example_human_reference.fasta', fastq
     return import_file(fasta_path, file_type='fasta'), import_file(fastq_path, file_type='fastq')
 
 
-def write_results_to_csv_file(file_name, parameters, results):
+def create_output_file_name(parameters):
+    version = ''
+    for k, v in parameters.items():
+        version += k + '_' + str(v) + '_'
+    return f'results_{version[:-1]}.csv'
+
+
+def create_label_in_output_file(parameters):
+    label = ''
+    for k, v in parameters.items():
+        label += k + ':' + str(v) + ' '
+    return label[:-1]
+
+def write_results_to_csv_file(parameters, results):
+    file_name = create_output_file_name(parameters)
+    # label is used for parsing parameters from files
+    # split by space => key : value
+    label = create_label_in_output_file(parameters)
     with open(file_name, mode='w') as result_file:
         writer = csv.writer(result_file)
-        writer.writerow(parameters.items())
-        writer.writerow(['start', 'end', 'alignment-score', 'transcription'])
+        writer.writerow([label])
+        writer.writerow(['start', 'end', 'dir', 'alignment-score', 'transcription'])
         for result in results:
             writer.writerow(list(result))
 
@@ -116,23 +133,15 @@ def ekstendovic(fasta_path, fastq_path, occurrences_matrix_path, c_path,
         suffix_array = read_from_file_to_dict(suffix_array_path)
 
         parameters = {"match": match, "mismatch": mismatch, "gap": gap, "margin": margin, "seed-length": seed_length}
-        file_name = create_output_file_name(parameters)
         results = seed_and_extend(references[0], reads, occurrences_matrix, c,
                                   suffix_array, scoring_points, margin, seed_length)
         logger.info('Finished with seed and extend.')
 
-        write_results_to_csv_file(file_name, parameters, results)
+        write_results_to_csv_file(parameters, results)
         logger.info('Finished writing results to csv file')
 
     except Exception as exc:
         logger.error(f'Following exception occurred', exc)
-
-
-def create_output_file_name(parameters):
-    version = ''
-    for k, v in parameters.items():
-        version += str(k) + '_' + str(v) + '_'
-    return f'results_{version[:-1]}.csv'
 
 
 if __name__ == '__main__':
