@@ -19,9 +19,10 @@ def import_fasta_fastq(fasta_path='../data/example_human_reference.fasta', fastq
     return import_file(fasta_path, file_type='fasta'), import_file(fastq_path, file_type='fastq')
 
 
-def write_results_to_csv_file(file_name, results):
+def write_results_to_csv_file(file_name, parameters, results):
     with open(file_name, mode='w') as result_file:
         writer = csv.writer(result_file)
+        writer.writerow(parameters.items())
         writer.writerow(['start', 'end', 'alignment-score', 'transcription'])
         for result in results:
             writer.writerow(list(result))
@@ -114,11 +115,12 @@ def ekstendovic(fasta_path, fastq_path, occurrences_matrix_path, c_path,
         c = read_from_file_to_dict(c_path)
         suffix_array = read_from_file_to_dict(suffix_array_path)
 
+        parameters = {"match": match, "mismatch": mismatch, "gap": gap, "margin": margin, "seed-length": seed_length }
         results = seed_and_extend(references[0], reads, occurrences_matrix, c,
                                   suffix_array, scoring_points, margin, seed_length)
         logger.info('Finished with seed and extend.')
 
-        write_results_to_csv_file(f'results-{time.time()}.csv', results)
+        write_results_to_csv_file(f'results-{time.time()}.csv', parameters, results)
         logger.info('Finished writing results to csv file')
 
     except Exception as exc:
