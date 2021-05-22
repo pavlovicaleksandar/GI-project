@@ -1,29 +1,38 @@
 import matplotlib.pyplot as plt
+import pandas as pd
+import logging
 # todo - please check requirements.txt
+
+logger = logging.getLogger(__name__)
 
 
 def import_bwa_mem(file_path):
-    # todo - import sam file
-    result = []
-    return result
+    # pysam does not work on windows 10
+    return False
+
+def import_single_giska_output(match, mismatch, gap, margin, seed_length):
+    version = f'match_{match}_mismatch_{mismatch}_gap_{gap}_margin_{margin}_seed-length_{seed_length}'
+    file_name = f'results_{version}.csv'
+    with open(file_name) as f:
+        txt = pd.read_csv(f, skiprows=1)
+    logger.info(f'Successfully read {file_name}')
+    return txt["alignment-score"]
 
 
-def parse_sam_file(file):
-    # todo - take as and reads
-    result = []
-    return result
-
-
-def import_single_giska_output(file_path):
-    # todo - import one file
-    result = []
-    return result
-
-
-def import_all_giska_outputs():
-    # todo - for each giska output
-    result = []
-    return result
+def import_draw_all_giska_outputs():
+    margin = 2
+    seed_length = 10
+    all_reads = []
+    i = 0
+    for match in [0, 1, 2]:
+        for mismatch in [-3, -2]:
+            for gap in [-7, -5]:
+                single_read = import_single_giska_output(match=match, mismatch=mismatch, gap=gap, margin=margin, seed_length=seed_length)
+                i += 1
+                draw_single_plot(i, f'match: {match}, mismatch: {mismatch}, gap: {gap}', single_read)
+                all_reads.append(single_read)
+    draw_all_plot(all_reads)
+    return all_reads
 
 
 def draw_single_plot(graph_num, pars, read):
@@ -56,6 +65,8 @@ def draw_all_plot(reads):
 
 
 # dummy test data
-reads = [[7, 2, 5, 3, 5, 9], [1, 2, 3, 4, 5, 9], [11, 5, 7, 1, 0, 3]]
-draw_single_plot(1, "match: 2; mismatch: -2; gap: -5", reads[0])
-draw_all_plot(reads)
+# reads = [[7, 2, 5, 3, 5, 9], [1, 2, 3, 4, 5, 9], [11, 5, 7, 1, 0, 3]]
+# draw_single_plot(1, "match: 2; mismatch: -2; gap: -5", reads[0])
+# draw_all_plot(reads)
+read = import_single_giska_output(match=1, mismatch=-2, gap=-7, margin=2, seed_length=10)
+draw_single_plot(1, f'match: {1}, mismatch: {-2}, gap: {-7}', read)
