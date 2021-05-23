@@ -27,6 +27,20 @@ def write_results_to_csv_file(file_name, results):
             writer.writerow(list(result))
 
 
+def write_sum_of_directions_of_mapped_reads_to_csv_file(file_name, results):
+    sum_forward = 0
+    total = len(results)
+    for result in results:
+        if result[2] == "fwd":
+            sum_forward += 1
+    sum_reverse = total - sum_forward
+
+    with open(file_name, mode='w') as result_file:
+        writer = csv.writer(result_file)
+        writer.writerow(['sum_total', 'sum_forward', 'sum_reverse', 'percentage_forward', 'percentage_reverse'])
+        writer.writerow([total, sum_forward, sum_reverse, sum_forward/total*100, sum_reverse/total*100])
+
+
 def write_data_to_file(data, file_name):
     with open(file_name, 'w') as om:
         # TODO - not happy with this, feels like I am duplicating the data. Discuss
@@ -118,8 +132,12 @@ def ekstendovic(fasta_path, fastq_path, occurrences_matrix_path, c_path,
                                   suffix_array, scoring_points, margin, seed_length)
         logger.info('Finished with seed and extend.')
 
-        write_results_to_csv_file(f'results-{time.time()}.csv', results)
+        timestamp = time.time()
+        write_results_to_csv_file(f'results-{timestamp}.csv', results)
         logger.info('Finished writing results to csv file')
+
+        write_sum_of_directions_of_mapped_reads_to_csv_file(f'sum_of_directions-{timestamp}.csv', results)
+        logger.info('Finished writing sum of directions to csv file')
 
     except Exception as exc:
         logger.error(f'Following exception occurred', exc)
