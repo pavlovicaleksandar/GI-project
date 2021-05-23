@@ -76,7 +76,7 @@ def traceback(this, that, distance_matrix, scoring_points):
             h = distance_matrix[i, j - 1] + scoring_matrix_inplace('_', that[j - 1], scoring_points)
 
         # backtracking to next (previous) cell
-        # todo : check error ;
+        # info:
         #   Added if i > 0 and j > 0 ... elif i > 0 - to skip over.
         #   This should add a `_` for the missing char
         if d >= v and d >= h and (i > 0 and j > 0):

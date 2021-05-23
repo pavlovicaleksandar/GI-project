@@ -75,7 +75,6 @@ def calculate_start_end_range(c, occ, query):
             start = c[reversed_query[ix]][0] + occ[reversed_query[ix]][start - 1]
             end = c[reversed_query[ix]][0] + occ[reversed_query[ix]][end] - 1
 
-        # todo : discuss if this makes a difference as last one can make a problem
         return (start, end) if start <= end else (-1, -1)
     except Exception:
         return -1, -1
