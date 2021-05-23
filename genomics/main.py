@@ -1,11 +1,12 @@
+from Bio import SeqIO
 from genomics.seed_extend import *
 from genomics.burrows import *
-from Bio import SeqIO
-import logging
+import ast
 import click
 import csv
+import logging
 import sys
-import ast
+import time
 
 logger = logging.getLogger(__name__)
 

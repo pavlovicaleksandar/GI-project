@@ -5,10 +5,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def import_bwa_mem(file_path):
-    # pysam does not work on windows 10
-    return False
-
 def import_single_giska_output(match, mismatch, gap, margin, seed_length):
     version = f'match_{match}_mismatch_{mismatch}_gap_{gap}_margin_{margin}_seed-length_{seed_length}'
     file_name = f'results_{version}.csv'
