@@ -6,7 +6,6 @@ import click
 import csv
 import logging
 import sys
-import time
 
 logger = logging.getLogger(__name__)
 
@@ -19,11 +18,19 @@ def import_fasta_fastq(fasta_path='../data/example_human_reference.fasta', fastq
     return import_file(fasta_path, file_type='fasta'), import_file(fastq_path, file_type='fastq')
 
 
-def create_output_file_name(parameters):
+def create_output_version(parameters):
     version = ''
     for k, v in parameters.items():
         version += k + '_' + str(v) + '_'
-    return f'results_{version[:-1]}.csv'
+    return version[:-1]
+
+
+def create_output_file_name(parameters, results=True):
+    version = create_output_version(parameters)
+    if results:
+        return f'results_{version}.csv'
+    else:
+        return f'sum_of_directions_{version}.csv'
 
 
 def create_label_in_output_file(parameters):
@@ -46,7 +53,8 @@ def write_results_to_csv_file(parameters, results):
             writer.writerow(list(result))
 
 
-def write_sum_of_directions_of_mapped_reads_to_csv_file(file_name, results):
+def write_sum_of_directions_of_mapped_reads_to_csv_file(parameters, results):
+    file_name = create_output_file_name(parameters, results=False)
     sum_forward = 0
     total = len(results)
     for result in results:
@@ -155,7 +163,8 @@ def ekstendovic(fasta_path, fastq_path, occurrences_matrix_path, c_path,
         write_results_to_csv_file(parameters, results)
         logger.info('Finished writing results to csv file')
 
-        write_sum_of_directions_of_mapped_reads_to_csv_file(f'sum_of_directions-{time.time()}.csv', results)
+        # sum_of_directions
+        write_sum_of_directions_of_mapped_reads_to_csv_file(parameters, results)
         logger.info('Finished writing sum of directions to csv file')
 
     except Exception as exc:
