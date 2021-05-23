@@ -22,23 +22,32 @@ def seed_and_extend(reference, reads, occ_matrix, c, suff_arr, scoring_points, m
         rc_seed = get_seed(seed_length, rc_read)
 
         # Added direction to be able to have more info in the result
-        result.extend(
-            extract(c, margin, occ_matrix, read, reference, seed, seed_length, scoring_points, suff_arr, dir="fwd"))
-        result.extend(
-            extract(c, margin, occ_matrix, rc_read, reference, rc_seed, seed_length, scoring_points, suff_arr, dir="rc"))
+        normal_result = extract(c, margin, occ_matrix, read, reference, seed, seed_length, scoring_points, suff_arr, dir="fwd")
+        rc_result = extract(c, margin, occ_matrix, rc_read, reference, rc_seed, seed_length, scoring_points, suff_arr, dir="rc")
 
-    return sorted(result, key=lambda tup: tup[3], reverse=True)
+        alignment_score_index_in_result_tuple = 3
+        if(normal_result[alignment_score_index_in_result_tuple] > rc_result[alignment_score_index_in_result_tuple]):
+            result.append(normal_result)
+        else:
+            result.append(rc_result)
+
+    return sorted(result, key=lambda tup: tup[alignment_score_index_in_result_tuple], reverse=True)
 
 
 def extract(c, margin, occ_matrix, read, reference, seed, seed_length, scoring_points, suff_arr, dir):
+
+    best_alignment_score = -1000 # Empiricaly discovered...
+
     start, end = calculate_start_end_range(c, occ_matrix, seed)
     if (start, end) == (-1, -1):
-        return []
-    seed_positions = find_all_query_positions_in_word_via_suffix_arr(start, end, suff_arr)
+        # return default result to avoid extracting data from empty tuple 
+        return (start, end, dir, best_alignment_score, '')
+    
     # ref     "ctgctgt agctagctgatcg"
     # read    "gctgt cgtc"
     # s       "gctgt"
-    result = []
+
+    seed_positions = find_all_query_positions_in_word_via_suffix_arr(start, end, suff_arr)    
     for start_of_seed in seed_positions:
         # start/end of reference
         start_pos = start_of_seed + seed_length
@@ -49,6 +58,8 @@ def extract(c, margin, occ_matrix, read, reference, seed, seed_length, scoring_p
                                                       scoring_points)
         alignment, transcript = traceback(read[seed_length:], reference[start_pos:end_pos], distances,
                                           scoring_points)
-        result.append((start, end, dir, alignment_score, transcript))
+
+        if(best_alignment_score < alignment_score):
+            result = (start, end, dir, alignment_score, transcript)
 
     return result
