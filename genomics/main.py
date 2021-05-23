@@ -32,6 +32,7 @@ def create_label_in_output_file(parameters):
         label += k + ':' + str(v) + ' '
     return label[:-1]
 
+
 def write_results_to_csv_file(parameters, results):
     file_name = create_output_file_name(parameters)
     # label is used for parsing parameters from files
@@ -43,6 +44,20 @@ def write_results_to_csv_file(parameters, results):
         writer.writerow(['start', 'end', 'dir', 'alignment-score', 'transcription'])
         for result in results:
             writer.writerow(list(result))
+
+
+def write_sum_of_directions_of_mapped_reads_to_csv_file(file_name, results):
+    sum_forward = 0
+    total = len(results)
+    for result in results:
+        if result[2] == "fwd":
+            sum_forward += 1
+    sum_reverse = total - sum_forward
+
+    with open(file_name, mode='w') as result_file:
+        writer = csv.writer(result_file)
+        writer.writerow(['sum_total', 'sum_forward', 'sum_reverse', 'percentage_forward', 'percentage_reverse'])
+        writer.writerow([total, sum_forward, sum_reverse, sum_forward/total*100, sum_reverse/total*100])
 
 
 def write_data_to_file(data, file_name):
@@ -139,6 +154,9 @@ def ekstendovic(fasta_path, fastq_path, occurrences_matrix_path, c_path,
 
         write_results_to_csv_file(parameters, results)
         logger.info('Finished writing results to csv file')
+
+        write_sum_of_directions_of_mapped_reads_to_csv_file(f'sum_of_directions-{time.time()}.csv', results)
+        logger.info('Finished writing sum of directions to csv file')
 
     except Exception as exc:
         logger.error(f'Following exception occurred', exc)
