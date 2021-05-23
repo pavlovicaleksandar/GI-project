@@ -102,6 +102,7 @@ def traceback(this, that, distance_matrix, scoring_points):
             #       2. if i < 0 and j < 0 but v < h: ?
             #       ...better safe than sorry ':D
             if j == 0:
+                logger.warning("Unexpected value: J = 0")
                 break
             ay += that[j - 1]
             ax += '_'
