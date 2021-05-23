@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import logging
-# todo - please check requirements.txt
 
 logger = logging.getLogger(__name__)
 
