@@ -32,7 +32,7 @@ def import_draw_all_giska_outputs():
 
 def draw_single_plot(graph_num, pars, read):
     # x - reads, y - alignment score
-    plt.figure()
+    fig = plt.figure()
     plt.suptitle(f'Graph number: {graph_num}')
     plt.xlabel("Reads")
     plt.ylabel("Alignment Score")
@@ -44,12 +44,13 @@ def draw_single_plot(graph_num, pars, read):
                       'alpha': 0.3, 'pad': 5})
     plt.plot(range(len(read)), read)
     plt.show()
+    fig.savefig(f'graph_{graph_num}.png')
 
 
 def draw_all_plot(reads):
     # x - reads, y - alignment score
     # label - match, mismatch, gap, margin, seed, etc
-    plt.figure()
+    fig = plt.figure()
     plt.suptitle("All in one")
     plt.xlabel("Reads")
     plt.ylabel("Alignment Score")
@@ -57,11 +58,13 @@ def draw_all_plot(reads):
         plt.plot(range(len(reads[r])), reads[r], label=r)
     plt.legend()
     plt.show()
+    fig.savefig(f'all_in_one_graph.png')
 
 
 # dummy test data
 # reads = [[7, 2, 5, 3, 5, 9], [1, 2, 3, 4, 5, 9], [11, 5, 7, 1, 0, 3]]
 # draw_single_plot(1, "match: 2; mismatch: -2; gap: -5", reads[0])
 # draw_all_plot(reads)
-read = import_single_giska_output(match=1, mismatch=-2, gap=-7, margin=2, seed_length=10)
-draw_single_plot(1, f'match: {1}, mismatch: {-2}, gap: {-7}', read)
+# read = import_single_giska_output(match=1, mismatch=-2, gap=-7, margin=2, seed_length=10)
+# draw_single_plot(1, f'match: {1}, mismatch: {-2}, gap: {-7}', read)
+import_draw_all_giska_outputs()
