@@ -3,7 +3,6 @@ from genomics.burrows import *
 from Bio import SeqIO
 import logging
 import click
-import time
 import csv
 import sys
 import ast
