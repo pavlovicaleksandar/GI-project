@@ -22,26 +22,31 @@ def seed_and_extend(reference, reads, occ_matrix, c, suff_arr, scoring_points, m
         rc_seed = get_seed(seed_length, rc_read)
 
         # Added direction to be able to have more info in the result
-        normal_result = extract(c, margin, occ_matrix, read, reference, seed, seed_length, scoring_points, suff_arr, dir="fwd")
-        rc_result = extract(c, margin, occ_matrix, rc_read, reference, rc_seed, seed_length, scoring_points, suff_arr, dir="rc")
+        fwd_result = extract(c, margin, occ_matrix, read, reference, seed,
+                             seed_length, scoring_points, suff_arr, dir="fwd")
+        rc_result = extract(c, margin, occ_matrix, rc_read, reference, rc_seed,
+                            seed_length, scoring_points, suff_arr, dir="rc")
 
         alignment_score_index_in_result_tuple = 3
-        if(normal_result[alignment_score_index_in_result_tuple] > rc_result[alignment_score_index_in_result_tuple]):
-            result.append(normal_result)
-        else:
+        if fwd_result[alignment_score_index_in_result_tuple] >= rc_result[alignment_score_index_in_result_tuple] \
+                and fwd_result[alignment_score_index_in_result_tuple] != -1000:
+            result.append(fwd_result)
+        elif rc_result[alignment_score_index_in_result_tuple] != -1000:
+            # skip if both are -1000
             result.append(rc_result)
 
     return sorted(result, key=lambda tup: tup[alignment_score_index_in_result_tuple], reverse=True)
 
 
 def extract(c, margin, occ_matrix, read, reference, seed, seed_length, scoring_points, suff_arr, dir):
-
-    best_alignment_score = -1000 # Empiricaly discovered...
+    # Empirically discovered...
+    best_alignment_score = -1000
 
     start, end = calculate_start_end_range(c, occ_matrix, seed)
+    result = (start, end, dir, best_alignment_score, '')
     if (start, end) == (-1, -1):
         # return default result to avoid extracting data from empty tuple 
-        return (start, end, dir, best_alignment_score, '')
+        return result
     
     # ref     "ctgctgt agctagctgatcg"
     # read    "gctgt cgtc"
@@ -59,7 +64,7 @@ def extract(c, margin, occ_matrix, read, reference, seed, seed_length, scoring_p
         alignment, transcript = traceback(read[seed_length:], reference[start_pos:end_pos], distances,
                                           scoring_points)
 
-        if(best_alignment_score < alignment_score):
+        if best_alignment_score < alignment_score:
             result = (start, end, dir, alignment_score, transcript)
 
     return result
