@@ -14,7 +14,8 @@ def import_file(path, file_type):
     return list(map(lambda r: str(r.seq), SeqIO.parse(path, file_type)))
 
 
-def import_fasta_fastq(fasta_path='../data/example_human_reference.fasta', fastq_path='../data/example_human_Illumina.pe_1.fastq'):
+def import_fasta_fastq(fasta_path='../data/example_human_reference.fasta',
+                       fastq_path='../data/example_human_Illumina.pe_1.fastq'):
     return import_file(fasta_path, file_type='fasta'), import_file(fastq_path, file_type='fastq')
 
 
@@ -161,11 +162,13 @@ def ekstendovic(fasta_path, fastq_path, occurrences_matrix_path, c_path,
         logger.info('Finished with seed and extend.')
 
         write_results_to_csv_file(parameters, results)
-        logger.info('Finished writing results to csv file')
+        logger.info(f'Finished writing results to csv file: '
+                    f'{create_output_file_name(parameters, results=True)}')
 
         # sum_of_directions
         write_sum_of_directions_of_mapped_reads_to_csv_file(parameters, results)
-        logger.info('Finished writing sum of directions to csv file')
+        logger.info(f'Finished writing sum of directions to csv file: '
+                    f'{create_output_file_name(parameters, results=False)}')
 
     except Exception as exc:
         logger.error(f'Following exception occurred', exc)

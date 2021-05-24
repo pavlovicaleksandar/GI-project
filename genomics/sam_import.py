@@ -16,17 +16,17 @@ def complement_direction_analysis(sam_file_path):
         from_reversed = read.flag & reversed_complement_flag > 0
         unmapped = read.flag & segment_unmapped_flag > 0
 
-        if (from_reversed and not unmapped):
+        if from_reversed and not unmapped:
             num_reversed += 1
         if not from_reversed and not unmapped:
             num_normal += 1
 
         total_number_of_reads += 1
 
-    reversed_percentage = (num_reversed / total_number_of_reads) * 100
-    normal_percentage = (num_normal / total_number_of_reads) * 100
+    fwd_percentage = (num_normal / total_number_of_reads) * 100
+    rc_percentage = (num_reversed / total_number_of_reads) * 100
 
-    return (normal_percentage, reversed_percentage)
+    return fwd_percentage, rc_percentage
 
 
 def plot_alignments_sorted_by_alignment_score(sam_file_path):
