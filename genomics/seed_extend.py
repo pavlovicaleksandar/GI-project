@@ -33,8 +33,8 @@ def seed_and_extend(reference, reads, occ_matrix, c, suff_arr, scoring_points, m
                 and fwd_result[alignment_score_index_in_result_tuple] != -1000:
             result.append(fwd_result)
         else:
-            
-            if(rc_result[alignment_score_index_in_result_tuple] != -1000):
+
+            if(rc_result[alignment_score_index_in_result_tuple] == -1000):
                 logger.info(f'There is an unmatched entry')
                 unmached_reads_counter += 1
             
