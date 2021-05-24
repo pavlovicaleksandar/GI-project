@@ -14,6 +14,7 @@ def get_seed(seed_length, read):
 # make coarse then do fine refine
 def seed_and_extend(reference, reads, occ_matrix, c, suff_arr, scoring_points, margin=3, seed_length=10):
     result = []
+    unmached_reads_counter = 0
     for read in reads:
         # for each read extract substrings - seeds and reverse complement
         rc_read = reverse_and_complement(read)
@@ -31,10 +32,15 @@ def seed_and_extend(reference, reads, occ_matrix, c, suff_arr, scoring_points, m
         if fwd_result[alignment_score_index_in_result_tuple] >= rc_result[alignment_score_index_in_result_tuple] \
                 and fwd_result[alignment_score_index_in_result_tuple] != -1000:
             result.append(fwd_result)
-        elif rc_result[alignment_score_index_in_result_tuple] != -1000:
-            # skip if both are -1000
+        else:
+            
+            if(rc_result[alignment_score_index_in_result_tuple] != -1000):
+                logger.info(f'There is an unmatched entry')
+                unmached_reads_counter += 1
+            
             result.append(rc_result)
 
+    logger.info(f'There are {unmached_reads_counter} unmached reads!')
     return sorted(result, key=lambda tup: tup[alignment_score_index_in_result_tuple], reverse=True)
 
 
