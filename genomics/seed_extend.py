@@ -49,7 +49,7 @@ def extract(c, margin, occ_matrix, read, reference, seed, seed_length, scoring_p
     best_alignment_score = -1000
 
     start, end = calculate_start_end_range(c, occ_matrix, seed)
-    result = (start, end, dir, best_alignment_score, '')
+    result = (start, end, dir, best_alignment_score, '', read)
     if (start, end) == (-1, -1):
         # return default result to avoid extracting data from empty tuple 
         return result
@@ -71,6 +71,6 @@ def extract(c, margin, occ_matrix, read, reference, seed, seed_length, scoring_p
                                           scoring_points)
 
         if best_alignment_score < alignment_score:
-            result = (start, end, dir, alignment_score, transcript)
+            result = (start, end, dir, alignment_score, transcript, read)
 
     return result
